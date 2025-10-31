@@ -106,9 +106,9 @@ export default function CartPage() {
         Shopping Cart
       </motion.h1>
       
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Cart Items */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-4 order-2 lg:order-1">
           <AnimatePresence>
             {cart.map((item, index) => (
               <motion.div
@@ -119,8 +119,8 @@ export default function CartPage() {
                 transition={{ delay: index * 0.1 }}
                 className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
               >
-              <div className="flex gap-6">
-                <div className="relative w-32 h-32 flex-shrink-0">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 mx-auto sm:mx-0">
                   <Image
                     src={item.image}
                     alt={item.title}
@@ -129,33 +129,33 @@ export default function CartPage() {
                   />
                 </div>
                 
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <Link href={`/product/${item.id}`}>
-                    <h3 className="text-lg font-medium hover:text-amazon-blue mb-2">
+                    <h3 className="text-base sm:text-lg font-medium hover:text-amazon-blue mb-2 line-clamp-2">
                       {item.title}
                     </h3>
                   </Link>
                   
-                  <p className="text-green-600 font-medium mb-2">In Stock</p>
+                  <p className="text-green-600 font-medium mb-2 text-sm">In Stock</p>
                   
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="flex items-center border border-gray-300 rounded-md">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4">
+                    <div className="flex items-center border border-gray-300 rounded-md w-fit">
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="px-3 py-1 hover:bg-gray-100"
+                        className="px-2 sm:px-3 py-1 hover:bg-gray-100 text-lg"
                       >
-                        -
+                        −
                       </motion.button>
-                      <span className="px-4 py-1 border-x border-gray-300">
+                      <span className="px-3 sm:px-4 py-1 border-x border-gray-300 min-w-[40px] text-center">
                         {item.quantity}
                       </span>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="px-3 py-1 hover:bg-gray-100"
+                        className="px-2 sm:px-3 py-1 hover:bg-gray-100 text-lg"
                       >
                         +
                       </motion.button>
@@ -165,14 +165,14 @@ export default function CartPage() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleRemoveClick(item.id)}
-                      className="flex items-center text-red-600 hover:text-red-700"
+                      className="flex items-center text-red-600 hover:text-red-700 text-sm"
                     >
                       <Trash2 className="w-4 h-4 mr-1" />
                       Remove
                     </motion.button>
                   </div>
                   
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">
                     {formatPrice(item.price * item.quantity)}
                   </p>
                 </div>
@@ -183,12 +183,12 @@ export default function CartPage() {
         </div>
 
         {/* Order Summary */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 order-1 lg:order-2">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-lg shadow p-6 sticky top-4"
+            className="bg-white rounded-lg shadow p-6 lg:sticky lg:top-4"
           >
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
             

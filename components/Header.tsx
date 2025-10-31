@@ -13,6 +13,7 @@ import LocationModal from './LocationModal';
 import MobileMenu from './MobileMenu';
 import SearchSuggestions from './SearchSuggestions';
 import CartPreview from './CartPreview';
+import NavDropdown from './NavDropdown';
 import { Product } from '@/types';
 
 export default function Header() {
@@ -25,8 +26,40 @@ export default function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [showCartPreview, setShowCartPreview] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [location, setLocation] = useState('India');
   const router = useRouter();
+
+  // Navigation dropdown items
+  const navItems = {
+    'Today\'s Deals': [
+      { label: 'Lightning Deals', href: '/' },
+      { label: 'Savings & Sales', href: '/' },
+      { label: 'Deals on Electronics', href: '/' },
+      { label: 'Deals on Fashion', href: '/' },
+    ],
+    'Customer Service': [
+      { label: 'Your Orders', href: '/orders' },
+      { label: 'Returns & Replacements', href: '/' },
+      { label: 'Manage Addresses', href: '/account' },
+      { label: 'Help', href: '/' },
+    ],
+    'Registry': [
+      { label: 'Wedding Registry', href: '/' },
+      { label: 'Baby Registry', href: '/' },
+      { label: 'Find a Registry', href: '/' },
+    ],
+    'Gift Cards': [
+      { label: 'Gift Cards Store', href: '/' },
+      { label: 'Reload Your Balance', href: '/' },
+      { label: 'Redeem a Gift Card', href: '/' },
+    ],
+    'Sell': [
+      { label: 'Start Selling', href: '/' },
+      { label: 'Seller Central', href: '/' },
+      { label: 'Learn to Sell', href: '/' },
+    ],
+  };
 
   // Filter products for search suggestions
   const searchSuggestions = searchQuery.trim()
@@ -80,7 +113,7 @@ export default function Header() {
 
       {/* Top Header */}
       <div className="bg-amazon-dark">
-        <div className="max-w-screen-2xl mx-auto px-4 py-2 flex items-center justify-between gap-2">
+        <div className="max-w-screen-2xl mx-auto px-4 py-2 flex items-center gap-2">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setShowMobileMenu(true)}
@@ -116,7 +149,7 @@ export default function Header() {
             onLocationSelect={handleLocationSelect}
           />
 
-          {/* Search Bar */}
+          {/* Search Bar - Desktop */}
           <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-2 md:mx-4 hidden sm:block">
             <div className="flex relative">
               {/* Category Dropdown */}
@@ -303,64 +336,103 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Mobile Search Bar */}
+      <div className="md:hidden bg-amazon-dark px-4 pb-2">
+        <form onSubmit={handleSearch} className="w-full">
+          <div className="flex relative">
+            {/* Category Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                className="bg-gray-200 text-gray-900 px-2 py-2.5 rounded-l-md border-r-2 border-amazon focus:outline-none hover:bg-gray-300 transition-colors flex items-center space-x-1"
+              >
+                <span className="text-xs font-medium">All</span>
+                <ChevronDown className="w-3 h-3 flex-shrink-0" />
+              </button>
+              
+              {/* Dropdown Menu */}
+              <AnimatePresence>
+                {showCategoryDropdown && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setShowCategoryDropdown(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-xl z-20 py-2 max-h-96 overflow-y-auto"
+                    >
+                      {categories.map((category) => (
+                        <button
+                          key={category}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCategory(category);
+                            setShowCategoryDropdown(false);
+                          }}
+                          className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors ${
+                            selectedCategory === category
+                              ? 'bg-amazon-light text-white font-semibold'
+                              : 'text-gray-900'
+                          }`}
+                        >
+                          {category}
+                        </button>
+                      ))}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Search Input */}
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowSearchSuggestions(true);
+              }}
+              onFocus={() => searchQuery && setShowSearchSuggestions(true)}
+              placeholder="Search Amazon Clone"
+              className="flex-1 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-amazon text-sm"
+            />
+            
+            {/* Search Button */}
+            <button
+              type="submit"
+              className="bg-amazon hover:bg-orange-600 px-4 py-2 rounded-r-md transition-colors"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+          </div>
+        </form>
+      </div>
+
       {/* Bottom Header */}
       <div className="bg-amazon-light">
         <div className="max-w-screen-2xl mx-auto px-4 py-2 flex items-center space-x-6 text-sm overflow-x-auto">
           <button 
-            onClick={() => {
-              setSelectedCategory('All');
-              router.push('/');
-            }}
+            onClick={() => setShowMobileMenu(true)}
             className="flex items-center space-x-1 hover:border border-white px-2 py-1 whitespace-nowrap"
           >
             <Menu className="w-5 h-5" />
             <span className="font-bold">All</span>
           </button>
-          <button
-            onClick={() => {
-              setSearchQuery('deals');
-              router.push('/');
-            }}
-            className="hover:border border-white px-2 py-1 whitespace-nowrap"
-          >
-            Today's Deals
-          </button>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              router.push('/');
-            }}
-            className="hover:border border-white px-2 py-1 whitespace-nowrap"
-          >
-            Customer Service
-          </button>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              router.push('/');
-            }}
-            className="hover:border border-white px-2 py-1 whitespace-nowrap"
-          >
-            Registry
-          </button>
-          <button
-            onClick={() => {
-              setSearchQuery('gift');
-              router.push('/');
-            }}
-            className="hover:border border-white px-2 py-1 whitespace-nowrap"
-          >
-            Gift Cards
-          </button>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              router.push('/');
-            }}
-            className="hover:border border-white px-2 py-1 whitespace-nowrap"
-          >
-            Sell
-          </button>
+          
+          {Object.entries(navItems).map(([title, items]) => (
+            <NavDropdown
+              key={title}
+              title={title}
+              items={items}
+              isOpen={activeDropdown === title}
+              onMouseEnter={() => setActiveDropdown(title)}
+              onMouseLeave={() => setActiveDropdown(null)}
+            />
+          ))}
         </div>
       </div>
     </header>

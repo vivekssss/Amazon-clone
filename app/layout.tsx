@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID_HERE">
+        <GoogleOAuthProvider clientId="542826558121-1464s19n4m97prm3dae4vcj8ih4ofl4i.apps.googleusercontent.com">
           <AuthProvider>
             <CartProvider>
               <SearchProvider>

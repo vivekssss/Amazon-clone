@@ -94,7 +94,7 @@ export default function BannerScroller() {
   };
 
   return (
-    <div className="relative w-full h-[400px] overflow-hidden rounded-lg shadow-lg mb-8">
+    <div className="relative w-full h-[400px] overflow-hidden rounded-lg shadow-lg mb-8 z-10">
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={currentIndex}

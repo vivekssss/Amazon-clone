@@ -21,7 +21,7 @@ export default function CartPreview({ isOpen }: CartPreviewProps) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="absolute top-full right-0 mt-2 w-96 bg-white text-gray-900 rounded-lg shadow-2xl z-50 border border-gray-200"
+          className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-white text-gray-900 rounded-lg shadow-2xl z-50 border border-gray-200 max-w-[calc(100vw-2rem)]"
         >
           {cart.length === 0 ? (
             <div className="p-6 text-center">
