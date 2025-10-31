@@ -34,7 +34,13 @@ export default function RootLayout({
                     background: 'transparent',
                     boxShadow: 'none',
                     padding: 0,
+                    zIndex: 9999,
                   },
+                  className: 'z-[9999]',
+                }}
+                containerStyle={{
+                  top: 80,
+                  zIndex: 9999,
                 }}
               />
               <Header />

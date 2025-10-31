@@ -8,8 +8,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useSearch, categories } from '@/context/SearchContext';
+import { products } from '@/data/products';
 import LocationModal from './LocationModal';
 import MobileMenu from './MobileMenu';
+import SearchSuggestions from './SearchSuggestions';
+import { Product } from '@/types';
 
 export default function Header() {
   const { totalItems } = useCart();
@@ -19,8 +22,19 @@ export default function Header() {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [location, setLocation] = useState('India');
   const router = useRouter();
+
+  // Filter products for search suggestions
+  const searchSuggestions = searchQuery.trim()
+    ? products.filter(
+        (product) =>
+          product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   // Load location from localStorage
   useEffect(() => {
@@ -44,8 +58,13 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      setShowSearchSuggestions(false);
       router.push('/');
     }
+  };
+
+  const handleProductSelect = (product: Product) => {
+    router.push(`/product/${product.id}`);
   };
 
   return (
@@ -103,7 +122,7 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-                  className="bg-gray-200 text-gray-900 px-3 py-2 rounded-l-md border-r-2 border-amazon focus:outline-none hover:bg-gray-300 transition-colors flex items-center space-x-1 w-32"
+                  className="bg-gray-200 text-gray-900 px-3 py-2.5 rounded-l-md border-r-2 border-amazon focus:outline-none hover:bg-gray-300 transition-colors flex items-center space-x-1 w-32 h-full"
                 >
                   <span className="text-sm font-medium truncate flex-1 text-left">{selectedCategory}</span>
                   <ChevronDown className="w-4 h-4 flex-shrink-0" />
@@ -147,13 +166,27 @@ export default function Header() {
               </div>
 
               {/* Search Input */}
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search Amazon Clone"
-                className="flex-1 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-amazon"
-              />
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowSearchSuggestions(true);
+                  }}
+                  onFocus={() => searchQuery && setShowSearchSuggestions(true)}
+                  placeholder="Search Amazon Clone"
+                  className="w-full px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-amazon"
+                />
+                
+                {/* Search Suggestions */}
+                <SearchSuggestions
+                  suggestions={searchSuggestions}
+                  isOpen={showSearchSuggestions}
+                  onSelectProduct={handleProductSelect}
+                  onClose={() => setShowSearchSuggestions(false)}
+                />
+              </div>
               
               {/* Search Button */}
               <button
@@ -261,26 +294,62 @@ export default function Header() {
 
       {/* Bottom Header */}
       <div className="bg-amazon-light">
-        <div className="max-w-screen-2xl mx-auto px-4 py-2 flex items-center space-x-6 text-sm">
-          <button className="flex items-center space-x-1 hover:border border-white px-2 py-1">
+        <div className="max-w-screen-2xl mx-auto px-4 py-2 flex items-center space-x-6 text-sm overflow-x-auto">
+          <button 
+            onClick={() => {
+              setSelectedCategory('All');
+              router.push('/');
+            }}
+            className="flex items-center space-x-1 hover:border border-white px-2 py-1 whitespace-nowrap"
+          >
             <Menu className="w-5 h-5" />
             <span className="font-bold">All</span>
           </button>
-          <Link href="/" className="hover:border border-white px-2 py-1">
+          <button
+            onClick={() => {
+              setSearchQuery('deals');
+              router.push('/');
+            }}
+            className="hover:border border-white px-2 py-1 whitespace-nowrap"
+          >
             Today's Deals
-          </Link>
-          <Link href="/" className="hover:border border-white px-2 py-1">
+          </button>
+          <button
+            onClick={() => {
+              setSearchQuery('');
+              router.push('/');
+            }}
+            className="hover:border border-white px-2 py-1 whitespace-nowrap"
+          >
             Customer Service
-          </Link>
-          <Link href="/" className="hover:border border-white px-2 py-1">
+          </button>
+          <button
+            onClick={() => {
+              setSearchQuery('');
+              router.push('/');
+            }}
+            className="hover:border border-white px-2 py-1 whitespace-nowrap"
+          >
             Registry
-          </Link>
-          <Link href="/" className="hover:border border-white px-2 py-1">
+          </button>
+          <button
+            onClick={() => {
+              setSearchQuery('gift');
+              router.push('/');
+            }}
+            className="hover:border border-white px-2 py-1 whitespace-nowrap"
+          >
             Gift Cards
-          </Link>
-          <Link href="/" className="hover:border border-white px-2 py-1">
+          </button>
+          <button
+            onClick={() => {
+              setSearchQuery('');
+              router.push('/');
+            }}
+            className="hover:border border-white px-2 py-1 whitespace-nowrap"
+          >
             Sell
-          </Link>
+          </button>
         </div>
       </div>
     </header>

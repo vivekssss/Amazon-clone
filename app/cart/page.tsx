@@ -8,9 +8,63 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/lib/utils';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
+  const [itemToRemove, setItemToRemove] = useState<string | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+  const handleRemoveClick = (itemId: string) => {
+    setItemToRemove(itemId);
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (itemToRemove) {
+      const item = cart.find(i => i.id === itemToRemove);
+      removeFromCart(itemToRemove);
+      toast.custom((t) => (
+        <motion.div
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="bg-white rounded-lg shadow-2xl p-4 max-w-md w-full border-l-4 border-red-500"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                <span className="text-xl">🗑️</span>
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-900 mb-1">
+                Removed from Cart
+              </p>
+              <p className="text-xs text-gray-600 line-clamp-2">
+                {item?.title}
+              </p>
+            </div>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+        </motion.div>
+      ), {
+        duration: 3000,
+      });
+    }
+    setShowConfirmDialog(false);
+    setItemToRemove(null);
+  };
+
+  const handleCancelRemove = () => {
+    setShowConfirmDialog(false);
+    setItemToRemove(null);
+  };
 
   if (cart.length === 0) {
     return (
@@ -110,13 +164,7 @@ export default function CartPage() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        removeFromCart(item.id);
-                        toast.success(`${item.title} removed from cart`, {
-                          duration: 2000,
-                          icon: '🗑️',
-                        });
-                      }}
+                      onClick={() => handleRemoveClick(item.id)}
                       className="flex items-center text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="w-4 h-4 mr-1" />
@@ -178,6 +226,17 @@ export default function CartPage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        title="Remove Item"
+        message="Are you sure you want to remove this item from your cart?"
+        confirmText="Remove"
+        cancelText="Cancel"
+        onConfirm={handleConfirmRemove}
+        onCancel={handleCancelRemove}
+      />
     </div>
   );
 }

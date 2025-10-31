@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '@/components/ProductCard';
 import BannerScroller from '@/components/BannerScroller';
 import FilterSidebar from '@/components/FilterSidebar';
-import ProductPreviewModal from '@/components/ProductPreviewModal';
+import ProductDrawer from '@/components/ProductDrawer';
 import { ProductGridSkeleton } from '@/components/SkeletonLoader';
 import { products } from '@/data/products';
 import { useSearch } from '@/context/SearchContext';
@@ -199,8 +199,8 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Product Preview Modal */}
-      <ProductPreviewModal
+      {/* Product Preview Drawer */}
+      <ProductDrawer
         product={previewProduct}
         isOpen={showPreview}
         onClose={() => setShowPreview(false)}

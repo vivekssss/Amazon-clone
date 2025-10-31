@@ -15,9 +15,22 @@ export function ProductCardSkeleton() {
 
 export function BannerSkeleton() {
   return (
-    <div className="relative w-full h-[400px] bg-gray-200 animate-pulse rounded-lg">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="h-8 bg-gray-300 rounded w-48"></div>
+    <div className="w-full h-96 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg mb-8 relative overflow-hidden">
+      {/* Shimmer effect */}
+      <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+      
+      {/* Content placeholders */}
+      <div className="absolute inset-0 p-12 flex flex-col justify-center space-y-4">
+        <div className="h-8 w-3/4 bg-gray-300 rounded-lg" />
+        <div className="h-6 w-1/2 bg-gray-300 rounded-lg" />
+        <div className="h-12 w-40 bg-gray-300 rounded-lg mt-4" />
+      </div>
+      
+      {/* Navigation dots */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="w-2 h-2 bg-gray-400 rounded-full" />
+        ))}
       </div>
     </div>
   );
