@@ -12,6 +12,7 @@ import { products } from '@/data/products';
 import LocationModal from './LocationModal';
 import MobileMenu from './MobileMenu';
 import SearchSuggestions from './SearchSuggestions';
+import CartPreview from './CartPreview';
 import { Product } from '@/types';
 
 export default function Header() {
@@ -23,6 +24,7 @@ export default function Header() {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const [showCartPreview, setShowCartPreview] = useState(false);
   const [location, setLocation] = useState('India');
   const router = useRouter();
 
@@ -219,10 +221,10 @@ export default function Header() {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute top-full right-0 mt-1 w-48 bg-white text-gray-900 rounded-lg shadow-xl z-50"
+                        className="absolute top-full right-0 mt-1 w-64 bg-white text-gray-900 rounded-lg shadow-xl z-50"
                       >
                         <div className="p-2">
-                          <div className="px-3 py-2 text-sm font-semibold border-b">
+                          <div className="px-3 py-2 text-sm font-semibold border-b break-words">
                             {user?.email}
                           </div>
                           <Link
@@ -267,27 +269,36 @@ export default function Header() {
             </div>
 
             {/* Cart */}
-            <Link
-              href="/cart"
-              className="flex items-center hover:border border-white px-2 py-1 relative group"
+            <div
+              className="relative"
+              onMouseEnter={() => setShowCartPreview(true)}
+              onMouseLeave={() => setShowCartPreview(false)}
             >
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="relative"
+              <Link
+                href="/cart"
+                className="flex items-center hover:border border-white px-2 py-1 relative group"
               >
-                <ShoppingCart className="w-8 h-8" />
-                {totalItems > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 bg-amazon text-amazon-dark font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center"
-                  >
-                    {totalItems}
-                  </motion.span>
-                )}
-              </motion.div>
-              <span className="ml-2 font-bold">Cart</span>
-            </Link>
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="relative"
+                >
+                  <ShoppingCart className="w-8 h-8" />
+                  {totalItems > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-1 -right-1 bg-amazon text-amazon-dark font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                    >
+                      {totalItems}
+                    </motion.span>
+                  )}
+                </motion.div>
+                <span className="ml-2 font-bold">Cart</span>
+              </Link>
+              
+              {/* Cart Preview */}
+              <CartPreview isOpen={showCartPreview} />
+            </div>
           </div>
         </div>
       </div>

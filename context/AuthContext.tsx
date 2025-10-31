@@ -3,14 +3,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
-  email: string;
   name: string;
+  email: string;
+  picture?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<boolean>;
+  loginWithGoogle: (credential: any) => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -58,6 +60,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const loginWithGoogle = (credential: any) => {
+    try {
+      // Decode JWT token to get user info
+      const base64Url = credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      const payload = JSON.parse(jsonPayload);
+      
+      const newUser = {
+        email: payload.email,
+        name: payload.name,
+        picture: payload.picture,
+      };
+      setUser(newUser);
+    } catch (error) {
+      console.error('Google login error:', error);
+    }
+  };
+
   const logout = () => {
     setUser(null);
   };
@@ -68,6 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         isAuthenticated: !!user,
         login,
+        loginWithGoogle,
         logout,
         isLoading,
       }}

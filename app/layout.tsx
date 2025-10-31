@@ -7,6 +7,7 @@ import { CartProvider } from '@/context/CartContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { SearchProvider } from '@/context/SearchContext';
 import { Toaster } from 'react-hot-toast';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,9 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <CartProvider>
-            <SearchProvider>
+        <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID_HERE">
+          <AuthProvider>
+            <CartProvider>
+              <SearchProvider>
               <Toaster
                 position="top-right"
                 toastOptions={{
@@ -46,9 +48,10 @@ export default function RootLayout({
               <Header />
               <main className="min-h-screen">{children}</main>
               <Footer />
-            </SearchProvider>
-          </CartProvider>
-        </AuthProvider>
+              </SearchProvider>
+            </CartProvider>
+          </AuthProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
